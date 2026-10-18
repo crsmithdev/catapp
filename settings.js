@@ -16,7 +16,6 @@ export const FIELDS = [
   { key: 'sceneVolume', label: 'Scene sounds', min: 0, max: 1, step: 0.05, value: 0.6, format: (v) => (v ? `${Math.round(v * 100)}%` : 'off') },
   { key: 'creatureVolume', label: 'Creature sounds', min: 0, max: 1, step: 0.05, value: 0.6, format: (v) => (v ? `${Math.round(v * 100)}%` : 'off') },
   { key: 'soundRate', label: 'Sound frequency', min: 0.25, max: 3, step: 0.25, value: 1, format: (v) => `${v}×` },
-  { key: 'soundVariety', label: 'Volume variation', min: 0, max: 0.9, step: 0.05, value: 0.5, format: (v) => `${Math.round(v * 100)}%` },
 ];
 
 const KEY = 'critters.settings';
@@ -39,11 +38,15 @@ export function initSettings(onChange) {
   const panel = document.getElementById('panel');
   const list = panel.querySelector('.fields');
 
+  // Each group is a section, so a column break never splits one.
+  let section = list;
   for (const f of FIELDS) {
     if (f.group) {
+      section = document.createElement('section');
       const h = document.createElement('h3');
       h.textContent = f.group;
-      list.append(h);
+      section.append(h);
+      list.append(section);
       continue;
     }
     const row = document.createElement('label');
@@ -60,7 +63,7 @@ export function initSettings(onChange) {
       save();
       onChange(f.key);
     });
-    list.append(row);
+    section.append(row);
   }
 
   let timer = 0;

@@ -19,9 +19,9 @@ export class Ambience {
     return this.s.ctx;
   }
 
-  // A random volume factor. The volume variation setting sets how far it can drop below 1.
+  // A random volume factor, so no two plays of a sound are the same level.
   vary() {
-    return 1 - Math.random() * settings.soundVariety;
+    return rand(0.5, 1);
   }
 
   // Opens an output for one sound on `bus`. Returns null when no voice is free.

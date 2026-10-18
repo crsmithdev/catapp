@@ -26,7 +26,6 @@ Hold the gear at the top right for one second to open the settings. A short tap 
 - scene sounds: the volume of each scene's background (room tone, breeze, wind, water, crickets) and its events (birds, bees, frogs, an owl and more)
 - creature sounds: the volume of the creatures' own noises (squeaks, patter, clicks, bubbles and more)
 - sound frequency: how often scene and creature sounds play
-- volume variation: how much each sound's volume changes from one play to the next
 
 The iPad keeps the settings in the browser. To add a setting, add a field to `FIELDS` in `settings.js` and read `settings.<key>` where it applies.
 

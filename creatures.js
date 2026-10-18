@@ -60,18 +60,21 @@ function colours(p) {
 // Makes a creature just outside a random edge, heading inward.
 export function makeCreature(kind, w, h) {
   const k = KINDS[kind];
-  const size = rand(...k.size) * settings.size;
+  const size0 = rand(...k.size);
+  const size = size0 * settings.size;
   const m = size * 2;
   const edge = Math.floor(Math.random() * 4);
   const x = edge === 1 ? w + m : edge === 3 ? -m : rand(0, w);
   const y = edge === 0 ? -m : edge === 2 ? h + m : rand(0, h);
   const tx = rand(w * 0.2, w * 0.8), ty = rand(h * 0.2, h * 0.8);
   const c = {
-    kind, k, x, y, size,
+    kind, k, x, y, size0, size,
     angle: Math.atan2(ty - y, tx - x),
-    // Each creature's speed varies around the middle of its kind's range.
-    base: ((k.speed[0] + k.speed[1]) / 2) * (1 + rand(-1, 1) * settings.speedVariety),
-    runFactor: 1,
+    // Each creature's speed varies around the middle of its kind's range: `vary` and `runVary`
+    // are fixed per creature and per dash, and the speed variation setting scales them.
+    mid: (k.speed[0] + k.speed[1]) / 2,
+    vary: rand(-1, 1),
+    runVary: 0,
     speed: 0,
     col: colours(pick(k.palettes)),
     phase: rand(0, TAU),
@@ -88,6 +91,7 @@ export function makeCreature(kind, w, h) {
     leaving: false,
     dying: -1,
   };
+  applySettings(c);
   c.speed = c.base;
   k.init?.(c);
   return c;
@@ -104,8 +108,16 @@ function exitAngle(c, w, h) {
   return [Math.PI, 0, -Math.PI / 2, Math.PI / 2][i];
 }
 
+// Size and speed follow the settings at every frame, so a change shows at once.
+function applySettings(c) {
+  c.size = c.size0 * settings.size;
+  c.base = c.mid * (1 + c.vary * settings.speedVariety);
+  c.runFactor = 1 + c.runVary * settings.speedVariety * 0.5;
+}
+
 // Advances one creature. Returns false when it is gone.
 export function updateCreature(c, dt, w, h) {
+  applySettings(c);
   c.age += dt;
   if (c.dying >= 0) {
     c.dying += dt / 0.35;
@@ -123,7 +135,7 @@ export function updateCreature(c, dt, w, h) {
       c.stateTimer = rand(...k.run);
       c.angle += rand(-k.kick, k.kick);
       // Each dash varies too, by up to half the speed variation.
-      c.runFactor = 1 + rand(-1, 1) * settings.speedVariety * 0.5;
+      c.runVary = rand(-1, 1);
     }
   }
   c.turnRate = clamp(c.turnRate + rand(-1, 1) * k.wobble * dt * 6, -k.wobble, k.wobble);

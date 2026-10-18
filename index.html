@@ -59,11 +59,11 @@
     position: fixed;
     top: calc(env(safe-area-inset-top) + 12px);
     right: calc(env(safe-area-inset-right) + 12px);
-    width: min(360px, calc(100vw - 24px));
+    width: min(720px, calc(100vw - 24px));
     max-height: calc(100vh - 24px);
     overflow-y: auto;
     box-sizing: border-box;
-    padding: 20px;
+    padding: 16px 20px;
     border-radius: 16px;
     background: rgba(20, 22, 30, 0.92);
     color: #eee;
@@ -72,7 +72,7 @@
     touch-action: manipulation;
   }
   #panel[hidden] { display: none; }
-  #panel header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  #panel header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
   #panel h2 { margin: 0; font-size: 18px; font-weight: 600; }
   #panel .close {
     min-width: 44px;
@@ -83,11 +83,13 @@
     color: #eee;
     font: inherit;
   }
-  #panel h3 { margin: 20px 0 4px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #889; }
-  #panel h3:first-child { margin-top: 0; }
-  #panel .field { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin: 14px 0; }
+  /* Two columns of groups, so the panel fits on the screen without scrolling. */
+  #panel .fields { columns: 2 280px; column-gap: 32px; }
+  #panel section { break-inside: avoid; padding-top: 8px; }
+  #panel h3 { margin: 0 0 2px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #889; }
+  #panel .field { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; margin: 4px 0 6px; font-size: 15px; }
   #panel output { color: #aab; font-variant-numeric: tabular-nums; }
-  #panel input[type=range] { grid-column: 1 / -1; width: 100%; min-height: 32px; accent-color: #f2c230; }
+  #panel input[type=range] { grid-column: 1 / -1; width: 100%; height: 32px; margin: 0; accent-color: #f2c230; }
 </style>
 </head>
 <body>

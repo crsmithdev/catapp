@@ -19,7 +19,7 @@ const game = (window.game = {
   scene: Math.floor(Math.random() * SCENES.length),
   next: -1,
   fade: 0,
-  sceneTimer: settings.rotation * 60,
+  sceneAge: 0,
   backdrops: new Map(),
   spawnTimer: 0,
   step,
@@ -52,11 +52,12 @@ function step(dt) {
   game.t += dt;
   const { w, h } = game;
 
-  game.sceneTimer -= dt;
-  if (game.next < 0 && game.sceneTimer <= 0) {
+  // The rotation setting is read at every frame, so a change applies to the current scene.
+  game.sceneAge += dt;
+  if (game.next < 0 && game.sceneAge >= settings.rotation * 60) {
     game.next = (game.scene + 1) % SCENES.length;
     game.fade = 0;
-    game.sceneTimer = settings.rotation * 60;
+    game.sceneAge = 0;
     // The old scene's creatures run off, and the new scene's creatures come in.
     for (const c of game.creatures) c.leaving = true;
   }
@@ -72,6 +73,15 @@ function step(dt) {
 
   game.spawnTimer -= dt;
   const alive = game.creatures.filter((c) => c.dying < 0 && !c.leaving).length;
+  // When the count setting drops, the oldest extra creatures leave.
+  let extra = alive - settings.count;
+  for (const c of game.creatures) {
+    if (extra <= 0) break;
+    if (c.dying < 0 && !c.leaving) {
+      c.leaving = true;
+      extra--;
+    }
+  }
   if (alive < settings.count && game.spawnTimer <= 0) {
     const mix = SCENES[game.next >= 0 ? game.next : game.scene].mix;
     game.creatures.push(makeCreature(weighted(mix), w, h));
@@ -174,7 +184,6 @@ for (const type of ['touchstart', 'touchmove', 'touchend', 'gesturestart', 'gest
 }
 window.addEventListener('resize', resize);
 initSettings((key) => {
-  if (key === 'rotation') game.sceneTimer = Math.min(game.sceneTimer, settings.rotation * 60);
   if (['volume', 'sceneVolume', 'creatureVolume'].includes(key)) game.sound.setVolume();
 });
 
