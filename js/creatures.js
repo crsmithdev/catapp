@@ -13,7 +13,7 @@ const GREEN = { h: [80, 110], s: [55, 75], l: [45, 55] };
 //   run, pause: duration ranges of each state; pause [0, 0] never stops.
 //   kick: largest turn when a run starts. wobble: largest turn rate during a run.
 //   accel: how fast speed follows its target. flutter: speed and height bob.
-export const KINDS = {
+const KINDS = {
   mouse: {
     size: [34, 50], speed: [200, 340], palettes: [YELLOW, BLUE, GREY, GREY],
     run: [0.4, 1.6], pause: [0.25, 1.4], kick: 1.3, wobble: 1.2, accel: 14,

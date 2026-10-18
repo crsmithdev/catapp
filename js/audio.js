@@ -20,11 +20,7 @@ export class Sound {
       this.master = this.ctx.createGain();
       this.master.gain.value = settings.volume;
       this.master.connect(this.ctx.createDynamicsCompressor()).connect(this.ctx.destination);
-      const n = Math.floor(this.ctx.sampleRate * 0.2);
-      this.noise = this.ctx.createBuffer(1, n, this.ctx.sampleRate);
-      const d = this.noise.getChannelData(0);
-      for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
-      // Longer white and brown noise for the ambient beds, and a bus each for scene and creature sounds.
+      // White and brown noise, and a bus each for scene and creature sounds.
       const m = Math.floor(this.ctx.sampleRate * 3);
       this.hiss = this.ctx.createBuffer(1, m, this.ctx.sampleRate);
       this.brown = this.ctx.createBuffer(1, m, this.ctx.sampleRate);
@@ -104,13 +100,13 @@ export class Sound {
     for (let i = 0; i < n; i++) {
       const t = now + i * rand(0.035, 0.06);
       const src = this.ctx.createBufferSource();
-      src.buffer = this.noise;
+      src.buffer = this.hiss;
       const bp = this.ctx.createBiquadFilter();
       bp.type = 'bandpass';
       bp.frequency.value = rand(2500, 5000);
       bp.Q.value = 3;
       src.connect(bp).connect(this.envelope(t, 0.4, 0.03));
-      src.start(t, rand(0, 0.15), 0.04);
+      src.start(t, rand(0, 2.9), 0.04);
     }
   }
 

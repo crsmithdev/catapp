@@ -381,7 +381,7 @@ function zip(a, bus, vol, pan) {
 const running = (c) => c.state === 'run' && c.moving > 0.5;
 
 // Keys are scene names from scenes.js.
-export const SCENE_SOUNDS = {
+const SCENE_SOUNDS = {
   kitchen: {
     bed: (a) => noiseBed(a, { brown: true, type: 'lowpass', freq: 450, base: 0.05, swing: 0.02, rate: 0.05 }),
     events: [{ every: 35, play: creak }, { every: 50, play: clink }, { every: 40, play: clock }],
@@ -405,7 +405,7 @@ export const SCENE_SOUNDS = {
 };
 
 // Keys are creature kinds from creatures.js. `when` limits a sound to a state, such as running.
-export const CREATURE_SOUNDS = {
+const CREATURE_SOUNDS = {
   mouse: [{ every: 14, play: squeak }, { every: 8, play: patter, when: running }],
   lizard: [{ every: 9, play: skitter, when: running }],
   beetle: [{ every: 14, play: click }],

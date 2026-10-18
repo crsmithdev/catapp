@@ -1,6 +1,6 @@
 // Settings. To add one, add a field here and read `settings.<key>` where it applies.
 // A field with `group` starts a new heading in the panel.
-export const FIELDS = [
+const FIELDS = [
   { group: 'Scenes' },
   { key: 'rotation', label: 'Scene change every', min: 0.5, max: 10, step: 0.5, value: 2, format: (v) => `${v} min` },
   { group: 'Creatures' },
