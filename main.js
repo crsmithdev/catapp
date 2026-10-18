@@ -4,6 +4,7 @@ import { SCENES } from './scenes.js';
 import { settings, initSettings } from './settings.js';
 import { Effects } from './effects.js';
 import { Sound } from './audio.js';
+import { Ambience } from './ambient.js';
 
 const FADE = 6;
 const canvas = document.getElementById('c');
@@ -23,6 +24,7 @@ const game = (window.game = {
   spawnTimer: 0,
   step,
 });
+game.ambience = new Ambience(game.sound);
 
 function backdrop(i) {
   if (!game.backdrops.has(i)) {
@@ -78,6 +80,10 @@ function step(dt) {
 
   game.creatures = game.creatures.filter((c) => updateCreature(c, dt * settings.speed, w, h));
   game.effects.update(dt);
+
+  const weights = { [SCENES[game.scene].name]: game.next >= 0 ? 1 - game.fade : 1 };
+  if (game.next >= 0) weights[SCENES[game.next].name] = game.fade;
+  game.ambience.update(dt, weights, game.creatures, w);
 }
 
 function draw() {
@@ -169,7 +175,7 @@ for (const type of ['touchstart', 'touchmove', 'touchend', 'gesturestart', 'gest
 window.addEventListener('resize', resize);
 initSettings((key) => {
   if (key === 'rotation') game.sceneTimer = Math.min(game.sceneTimer, settings.rotation * 60);
-  if (key === 'volume') game.sound.setVolume(settings.volume);
+  if (['volume', 'sceneVolume', 'creatureVolume'].includes(key)) game.sound.setVolume();
 });
 
 let last = performance.now();

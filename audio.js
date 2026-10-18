@@ -24,13 +24,33 @@ export class Sound {
       this.noise = this.ctx.createBuffer(1, n, this.ctx.sampleRate);
       const d = this.noise.getChannelData(0);
       for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+      // Longer white and brown noise for the ambient beds, and a bus each for scene and creature sounds.
+      const m = Math.floor(this.ctx.sampleRate * 3);
+      this.hiss = this.ctx.createBuffer(1, m, this.ctx.sampleRate);
+      this.brown = this.ctx.createBuffer(1, m, this.ctx.sampleRate);
+      const h = this.hiss.getChannelData(0), b = this.brown.getChannelData(0);
+      let last = 0;
+      for (let i = 0; i < m; i++) {
+        h[i] = Math.random() * 2 - 1;
+        last = (last + 0.02 * h[i]) / 1.02;
+        b[i] = last * 3.5;
+      }
+      this.sceneBus = this.ctx.createGain();
+      this.creatureBus = this.ctx.createGain();
+      this.sceneBus.connect(this.master);
+      this.creatureBus.connect(this.master);
+      this.setVolume();
     }
     // iOS can suspend or interrupt the context at any time; each touch resumes it.
     if (this.ctx.state !== 'running') this.ctx.resume();
   }
 
-  setVolume(v) {
-    if (this.master) this.master.gain.value = v;
+  // Applies the volume settings.
+  setVolume() {
+    if (!this.master) return;
+    this.master.gain.value = settings.volume;
+    this.sceneBus.gain.value = settings.sceneVolume;
+    this.creatureBus.gain.value = settings.creatureVolume;
   }
 
   // Reserves a voice for `dur` seconds. Returns the start time, or -1 when no voice is free.

@@ -22,11 +22,15 @@ Hold the gear at the top right for one second to open the settings. A short tap 
 - creature size (new creatures only)
 - touch effect size
 - run away from near touches: how far away a touch scares a creature and how fast it runs (off to 2×)
-- sound volume
+- master volume, for all sound
+- scene sounds: the volume of each scene's background (room tone, breeze, wind, water, crickets) and its events (birds, bees, frogs, an owl and more)
+- creature sounds: the volume of the creatures' own noises (squeaks, patter, clicks, bubbles and more)
+- sound frequency: how often scene and creature sounds play
+- volume variation: how much each sound's volume changes from one play to the next
 
 The iPad keeps the settings in the browser. To add a setting, add a field to `FIELDS` in `settings.js` and read `settings.<key>` where it applies.
 
-No build step and no dependencies. All art is drawn in code and all sound is synthesized.
+No build step and no dependencies. All art is drawn in code and all sound is synthesized. Each scene has its own background sounds, and each creature kind makes its own noises, at random gaps.
 
 ## Serve
 
