@@ -10,20 +10,20 @@ No build step and no dependencies. All art is drawn in code and all sound is syn
 ./serve.sh
 ```
 
-This serves the app on port 3020 to the home network.
+This serves the app on port 8421 to the home network.
 
 WSL2 in NAT mode does not take connections from the network. Do this once, in an admin PowerShell on Windows:
 
 ```
-netsh interface portproxy add v4tov4 listenaddress=<windows-lan-ip> listenport=3020 connectaddress=127.0.0.1 connectport=3020
-New-NetFirewallRule -DisplayName "catapp 3020" -Direction Inbound -Protocol TCP -LocalPort 3020 -Action Allow -Profile Private
+netsh interface portproxy add v4tov4 listenaddress=<windows-lan-ip> listenport=8421 connectaddress=127.0.0.1 connectport=8421
+New-NetFirewallRule -DisplayName "catapp 8421" -Direction Inbound -Protocol TCP -LocalPort 8421 -Action Allow -Profile Private
 ```
 
-The proxy goes to `127.0.0.1`, and Windows forwards `127.0.0.1` to WSL, so the proxy continues to work when the WSL IP changes. The proxy must listen on the LAN IP only. A proxy on `0.0.0.0` also takes `127.0.0.1:3020` and sends each connection back to itself. To find the Windows LAN IP, run `ipconfig` and look for the IPv4 address of the Wi-Fi or Ethernet adapter. If the LAN IP changes, delete the proxy and add it again.
+The proxy goes to `127.0.0.1`, and Windows forwards `127.0.0.1` to WSL, so the proxy continues to work when the WSL IP changes. The proxy must listen on the LAN IP only. A proxy on `0.0.0.0` also takes `127.0.0.1:8421` and sends each connection back to itself. To find the Windows LAN IP, run `ipconfig` and look for the IPv4 address of the Wi-Fi or Ethernet adapter. If the LAN IP changes, delete the proxy and add it again.
 
 ## Set up the iPad
 
-1. In Safari, open `http://<windows-lan-ip>:3020`.
+1. In Safari, open `http://<windows-lan-ip>:8421`.
 2. Tap Share, then Add to Home Screen. Open Critters from the Home Screen. It opens full screen.
 3. Turn on Guided Access: Settings > Accessibility > Guided Access. Set a passcode. Set Display Auto-Lock to Never.
 4. In Critters, triple-click the top button (or the Home button) and tap Start. The cat cannot leave the app, and notifications and Control Center do not show.
