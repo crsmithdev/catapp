@@ -33,10 +33,12 @@
     display: block;
     touch-action: none;
   }
+  /* iOS delays touches near the screen edges, which breaks a hold, so the gear keeps clear of them. */
   #gear {
     position: fixed;
-    top: calc(env(safe-area-inset-top) + 12px);
-    right: calc(env(safe-area-inset-right) + 12px);
+    top: calc(env(safe-area-inset-top) + 48px);
+    right: calc(env(safe-area-inset-right) + 48px);
+    touch-action: none;
     width: 44px;
     height: 44px;
     padding: 10px;

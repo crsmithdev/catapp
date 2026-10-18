@@ -57,6 +57,6 @@ export function initSettings(onChange) {
       panel.hidden = false;
     }, HOLD_MS);
   });
-  for (const type of ['pointerup', 'pointercancel', 'pointerleave']) gear.addEventListener(type, cancel);
+  for (const type of ['pointerup', 'pointercancel']) gear.addEventListener(type, cancel);
   panel.querySelector('.close').addEventListener('click', () => (panel.hidden = true));
 }
