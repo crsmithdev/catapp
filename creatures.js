@@ -69,7 +69,9 @@ export function makeCreature(kind, w, h) {
   const c = {
     kind, k, x, y, size,
     angle: Math.atan2(ty - y, tx - x),
-    base: rand(...k.speed),
+    // Each creature's speed varies around the middle of its kind's range.
+    base: ((k.speed[0] + k.speed[1]) / 2) * (1 + rand(-1, 1) * settings.speedVariety),
+    runFactor: 1,
     speed: 0,
     col: colours(pick(k.palettes)),
     phase: rand(0, TAU),
@@ -120,12 +122,14 @@ export function updateCreature(c, dt, w, h) {
       c.state = 'run';
       c.stateTimer = rand(...k.run);
       c.angle += rand(-k.kick, k.kick);
+      // Each dash varies too, by up to half the speed variation.
+      c.runFactor = 1 + rand(-1, 1) * settings.speedVariety * 0.5;
     }
   }
   c.turnRate = clamp(c.turnRate + rand(-1, 1) * k.wobble * dt * 6, -k.wobble, k.wobble);
   if (c.state === 'run') c.angle += c.turnRate * dt;
 
-  let target = c.state === 'run' ? c.base : 0;
+  let target = c.state === 'run' ? c.base * c.runFactor : 0;
   if (k.flutter) {
     target *= 0.7 + 0.5 * Math.sin(c.age * 3 + c.seed);
     c.z = 0.5 + 0.5 * Math.sin(c.age * 2 + c.seed);

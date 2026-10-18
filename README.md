@@ -18,6 +18,7 @@ Hold the gear at the top right for one second to open the settings. A short tap 
 - scene change interval (default 2 minutes)
 - creatures on screen (default 3)
 - creature speed
+- speed variation: how much speeds differ between creatures and between dashes
 - creature size (new creatures only)
 - touch effect size
 - run away from near touches: how far away a touch scares a creature and how fast it runs (off to 2×)
