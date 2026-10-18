@@ -15,11 +15,11 @@ This serves the app on port 3020 to the home network.
 WSL2 in NAT mode does not take connections from the network. Do this once, in an admin PowerShell on Windows:
 
 ```
-netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=3020 connectaddress=127.0.0.1 connectport=3020
+netsh interface portproxy add v4tov4 listenaddress=<windows-lan-ip> listenport=3020 connectaddress=127.0.0.1 connectport=3020
 New-NetFirewallRule -DisplayName "catapp 3020" -Direction Inbound -Protocol TCP -LocalPort 3020 -Action Allow -Profile Private
 ```
 
-The proxy goes to `127.0.0.1`, so it continues to work when the WSL IP changes. To find the Windows LAN IP, run `ipconfig` and look for the IPv4 address of the Wi-Fi adapter.
+The proxy goes to `127.0.0.1`, and Windows forwards `127.0.0.1` to WSL, so the proxy continues to work when the WSL IP changes. The proxy must listen on the LAN IP only. A proxy on `0.0.0.0` also takes `127.0.0.1:3020` and sends each connection back to itself. To find the Windows LAN IP, run `ipconfig` and look for the IPv4 address of the Wi-Fi or Ethernet adapter. If the LAN IP changes, delete the proxy and add it again.
 
 ## Set up the iPad
 
