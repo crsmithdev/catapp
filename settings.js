@@ -3,6 +3,9 @@ export const FIELDS = [
   { key: 'rotation', label: 'Scene change every', min: 0.5, max: 10, step: 0.5, value: 2, format: (v) => `${v} min` },
   { key: 'count', label: 'Creatures on screen', min: 1, max: 8, step: 1, value: 3, format: (v) => `${v}` },
   { key: 'speed', label: 'Creature speed', min: 0.3, max: 2, step: 0.1, value: 1, format: (v) => `${v.toFixed(1)}×` },
+  { key: 'size', label: 'Creature size', min: 0.5, max: 2, step: 0.1, value: 1, format: (v) => `${v.toFixed(1)}×` },
+  { key: 'effectSize', label: 'Touch effect size', min: 0.5, max: 2, step: 0.1, value: 1, format: (v) => `${v.toFixed(1)}×` },
+  { key: 'flee', label: 'Run away from near touches', min: 0, max: 2, step: 0.1, value: 1, format: (v) => (v ? `${v.toFixed(1)}×` : 'off') },
   { key: 'volume', label: 'Sound volume', min: 0, max: 1, step: 0.1, value: 0.7, format: (v) => (v ? `${Math.round(v * 100)}%` : 'off') },
 ];
 

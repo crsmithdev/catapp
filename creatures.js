@@ -1,4 +1,5 @@
 import { TAU, rand, pick, clamp } from './util.js';
+import { settings } from './settings.js';
 
 // Palettes are HSL ranges. Cats see blue and yellow best, so most kinds lean on those.
 const YELLOW = { h: [44, 56], s: [80, 95], l: [52, 64] };
@@ -59,7 +60,7 @@ function colours(p) {
 // Makes a creature just outside a random edge, heading inward.
 export function makeCreature(kind, w, h) {
   const k = KINDS[kind];
-  const size = rand(...k.size);
+  const size = rand(...k.size) * settings.size;
   const m = size * 2;
   const edge = Math.floor(Math.random() * 4);
   const x = edge === 1 ? w + m : edge === 3 ? -m : rand(0, w);
@@ -145,7 +146,7 @@ export function updateCreature(c, dt, w, h) {
     if (nearEdge) turnToward(c, Math.atan2(h / 2 - c.y, w / 2 - c.x), (c.entered ? 3 : 2) * dt);
   }
 
-  const sp = c.flee > 0 ? Math.max(c.speed, c.base * (1.5 + 2 * c.flee / 0.9)) : c.speed;
+  const sp = c.flee > 0 ? Math.max(c.speed, c.base * (1 + c.fleeStrength * (0.5 + 2 * c.flee / 0.9))) : c.speed;
   c.x += Math.cos(c.angle) * sp * dt;
   c.y += Math.sin(c.angle) * sp * dt;
   c.phase += dt * (3 + sp * 0.06);
@@ -156,9 +157,10 @@ export function updateCreature(c, dt, w, h) {
   return !((c.entered || c.leaving) && outside);
 }
 
-// Makes the creature dart away from a touch at (tx, ty).
-export function scare(c, tx, ty) {
+// Makes the creature dart away from a touch at (tx, ty). `strength` scales the speed of the dash.
+export function scare(c, tx, ty, strength) {
   c.flee = 0.9;
+  c.fleeStrength = strength;
   c.state = 'run';
   c.stateTimer = rand(...c.k.run) + 0.9;
   c.angle = Math.atan2(c.y - ty, c.x - tx) + rand(-0.4, 0.4);

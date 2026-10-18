@@ -1,6 +1,6 @@
 # Critters
 
-A web app for cats on an iPad. Small creatures cross the screen, seen from above. A paw touch on a creature makes it burst and squeak. A near miss makes it run away. A touch on empty ground makes a ripple. There is no menu, no text and no score.
+A web app for cats on an iPad. Small creatures cross the screen, seen from above. A paw touch on a creature makes it squeak and burst into one of five effects: pop, confetti, stars, shockwave or sparkle. A near miss makes it run away. A touch on empty ground makes a ripple. There is no menu, no text and no score.
 
 Five scenes show in turn, each with its own creatures:
 
@@ -18,6 +18,9 @@ Hold the gear at the top right for one second to open the settings. A short tap 
 - scene change interval (default 2 minutes)
 - creatures on screen (default 3)
 - creature speed
+- creature size (new creatures only)
+- touch effect size
+- run away from near touches: how far away a touch scares a creature and how fast it runs (off to 2×)
 - sound volume
 
 The iPad keeps the settings in the browser. To add a setting, add a field to `FIELDS` in `settings.js` and read `settings.<key>` where it applies.

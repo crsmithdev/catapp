@@ -126,11 +126,12 @@ function touch(x, y) {
     game.spawnTimer = Math.max(game.spawnTimer, rand(1, 3));
     return true;
   }
+  // The flee setting scales both the reach of a near touch and the speed of the dash.
   let scared = false;
   for (const c of game.creatures) {
-    if (c.dying >= 0) continue;
-    if (Math.hypot(c.x - x, c.y - y) < hitRadius(c) * 3) {
-      scare(c, x, y);
+    if (c.dying >= 0 || !settings.flee) continue;
+    if (Math.hypot(c.x - x, c.y - y) < hitRadius(c) * (1 + 2 * settings.flee)) {
+      scare(c, x, y, settings.flee);
       scared = true;
     }
   }
