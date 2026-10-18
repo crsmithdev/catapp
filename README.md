@@ -1,1 +1,40 @@
-# catapp
+# Critters
+
+A web app for cats on an iPad. Small creatures cross the screen, seen from above. A paw touch on a creature makes it burst and squeak. A near miss makes it run away. A touch on empty ground makes a ripple. The scene changes every 3–6 minutes. There is no menu, no text and no score.
+
+No build step and no dependencies. All art is drawn in code and all sound is synthesized.
+
+## Serve
+
+```
+./serve.sh
+```
+
+This serves the app on port 3020 to the home network.
+
+WSL2 in NAT mode does not take connections from the network. Do this once, in an admin PowerShell on Windows:
+
+```
+netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=3020 connectaddress=127.0.0.1 connectport=3020
+New-NetFirewallRule -DisplayName "catapp 3020" -Direction Inbound -Protocol TCP -LocalPort 3020 -Action Allow -Profile Private
+```
+
+The proxy goes to `127.0.0.1`, so it continues to work when the WSL IP changes. To find the Windows LAN IP, run `ipconfig` and look for the IPv4 address of the Wi-Fi adapter.
+
+## Set up the iPad
+
+1. In Safari, open `http://<windows-lan-ip>:3020`.
+2. Tap Share, then Add to Home Screen. Open Critters from the Home Screen. It opens full screen.
+3. Turn on Guided Access: Settings > Accessibility > Guided Access. Set a passcode. Set Display Auto-Lock to Never.
+4. In Critters, triple-click the top button (or the Home button) and tap Start. The cat cannot leave the app, and notifications and Control Center do not show.
+5. To stop, triple-click and enter the passcode.
+
+The first touch turns on the sound. iOS does not allow sound before a touch.
+
+## Limits
+
+The app is served over plain HTTP on the LAN, so:
+- The PC must be on. There is no offline mode.
+- The page cannot keep the screen on. Guided Access's Display Auto-Lock does that.
+
+An HTTPS host, for example GitHub Pages, removes both limits.
