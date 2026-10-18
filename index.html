@@ -33,10 +33,68 @@
     display: block;
     touch-action: none;
   }
+  #gear {
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 12px);
+    right: calc(env(safe-area-inset-right) + 12px);
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.25);
+    color: #fff;
+    opacity: 0.3;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  /* While held, the gear brightens and turns for the length of the hold. */
+  #gear.holding {
+    opacity: 1;
+    transform: rotate(180deg);
+    transition: opacity 0.2s, transform 1s linear;
+  }
+  #panel {
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 12px);
+    right: calc(env(safe-area-inset-right) + 12px);
+    width: min(360px, calc(100vw - 24px));
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 20px;
+    border-radius: 16px;
+    background: rgba(20, 22, 30, 0.92);
+    color: #eee;
+    font: 16px/1.4 -apple-system, system-ui, sans-serif;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    touch-action: manipulation;
+  }
+  #panel[hidden] { display: none; }
+  #panel header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  #panel h2 { margin: 0; font-size: 18px; font-weight: 600; }
+  #panel .close {
+    min-width: 44px;
+    min-height: 44px;
+    border: 0;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #eee;
+    font: inherit;
+  }
+  #panel .field { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin: 14px 0; }
+  #panel output { color: #aab; font-variant-numeric: tabular-nums; }
+  #panel input[type=range] { grid-column: 1 / -1; width: 100%; min-height: 32px; accent-color: #f2c230; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
+<button id="gear" aria-label="Settings (hold)">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+</button>
+<div id="panel" hidden>
+  <header><h2>Settings</h2><button class="close">Done</button></header>
+  <div class="fields"></div>
+</div>
 <script type="module" src="main.js"></script>
 </body>
 </html>

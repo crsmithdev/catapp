@@ -1,22 +1,12 @@
-import { TAU, rand } from './util.js';
+import { TAU, rand, pick } from './util.js';
 
+// The app shows the scenes in this order and then starts again.
 // Each scene paints a static background once per resize, and may draw a live overlay.
 // `mix` gives the spawn weight of each creature kind. `glow` lights creatures up.
 export const SCENES = [
   {
-    name: 'grass',
-    mix: { mouse: 3, beetle: 2, ladybug: 2, lizard: 2, butterfly: 2, laser: 1 },
-    paint(g, w, h) {
-      g.fillStyle = '#26401d';
-      g.fillRect(0, 0, w, h);
-      patches(g, w, h, 'rgba(10,25,5,0.35)', 'rgba(70,100,30,0.2)');
-      blades(g, w, h, 95, 125, 35, 50, 14, 30);
-      vignette(g, w, h, 0.45);
-    },
-  },
-  {
-    name: 'wood',
-    mix: { mouse: 3, beetle: 2, ladybug: 1, lizard: 1, laser: 3 },
+    name: 'kitchen',
+    mix: { mouse: 1 },
     paint(g, w, h) {
       let y = 0;
       while (y < h) {
@@ -46,8 +36,68 @@ export const SCENES = [
     },
   },
   {
+    name: 'meadow',
+    mix: { butterfly: 2, ladybug: 1 },
+    paint(g, w, h) {
+      g.fillStyle = '#26401d';
+      g.fillRect(0, 0, w, h);
+      patches(g, w, h, 'rgba(10,25,5,0.35)', 'rgba(70,100,30,0.2)');
+      blades(g, w, h, 95, 125, 35, 50, 14, 30);
+      // Small flowers in clumps.
+      for (let i = 0; i < (w * h) / 40000; i++) {
+        const cx = rand(0, w), cy = rand(0, h), colour = pick(['#f4f0f8', '#e7a6d4', '#b49ae8']);
+        for (let j = 0; j < 6; j++) {
+          const x = cx + rand(-40, 40), y = cy + rand(-40, 40), r = rand(3, 5);
+          g.fillStyle = colour;
+          for (let k = 0; k < 5; k++) {
+            const a = (k / 5) * TAU;
+            g.beginPath();
+            g.arc(x + Math.cos(a) * r, y + Math.sin(a) * r, r * 0.7, 0, TAU);
+            g.fill();
+          }
+          g.fillStyle = '#e8c33a';
+          g.beginPath();
+          g.arc(x, y, r * 0.5, 0, TAU);
+          g.fill();
+        }
+      }
+      vignette(g, w, h, 0.45);
+    },
+  },
+  {
+    name: 'desert',
+    mix: { lizard: 2, beetle: 1 },
+    paint(g, w, h) {
+      g.fillStyle = '#6b4630';
+      g.fillRect(0, 0, w, h);
+      patches(g, w, h, 'rgba(60,30,15,0.3)', 'rgba(160,110,70,0.18)');
+      for (let i = 0; i < (w * h) / 60; i++) {
+        g.fillStyle = `hsla(${rand(18, 35)}, ${rand(25, 45)}%, ${rand(25, 55)}%, 0.5)`;
+        g.fillRect(rand(0, w), rand(0, h), rand(1, 2.5), rand(1, 2.5));
+      }
+      // Flat rocks in the corners and along the edges.
+      for (let i = 0; i < 9; i++) {
+        const x = Math.random() < 0.5 ? rand(0, w * 0.18) : rand(w * 0.82, w);
+        const y = rand(0, h), rx = rand(40, 110), ry = rx * rand(0.5, 0.8), a = rand(0, TAU);
+        g.fillStyle = 'rgba(0,0,0,0.3)';
+        g.beginPath();
+        g.ellipse(x + 8, y + 10, rx, ry, a, 0, TAU);
+        g.fill();
+        g.fillStyle = `hsl(${rand(20, 35)}, ${rand(8, 18)}%, ${rand(36, 46)}%)`;
+        g.beginPath();
+        g.ellipse(x, y, rx, ry, a, 0, TAU);
+        g.fill();
+        g.fillStyle = 'rgba(255,255,255,0.08)';
+        g.beginPath();
+        g.ellipse(x - rx * 0.2, y - ry * 0.25, rx * 0.6, ry * 0.45, a, 0, TAU);
+        g.fill();
+      }
+      vignette(g, w, h, 0.5);
+    },
+  },
+  {
     name: 'pond',
-    mix: { fish: 6, butterfly: 2 },
+    mix: { fish: 1 },
     paint(g, w, h) {
       const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.hypot(w, h) / 2);
       gr.addColorStop(0, '#0f4253');
@@ -93,14 +143,18 @@ export const SCENES = [
     },
   },
   {
-    name: 'night',
+    name: 'living room at night',
     glow: 1,
-    mix: { mouse: 2, beetle: 1, butterfly: 2, lizard: 1, laser: 3 },
+    mix: { laser: 1 },
     paint(g, w, h) {
-      g.fillStyle = '#0a0f1f';
+      g.fillStyle = '#0d1022';
       g.fillRect(0, 0, w, h);
-      blades(g, w, h, 210, 235, 20, 35, 8, 16);
-      vignette(g, w, h, 0.6);
+      // Carpet pile.
+      for (let i = 0; i < (w * h) / 40; i++) {
+        g.fillStyle = `hsla(${rand(225, 250)}, ${rand(15, 30)}%, ${rand(8, 18)}%, 0.6)`;
+        g.fillRect(rand(0, w), rand(0, h), 1.5, 1.5);
+      }
+      vignette(g, w, h, 0.65);
     },
   },
 ];

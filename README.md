@@ -1,6 +1,26 @@
 # Critters
 
-A web app for cats on an iPad. Small creatures cross the screen, seen from above. A paw touch on a creature makes it burst and squeak. A near miss makes it run away. A touch on empty ground makes a ripple. The scene changes every 3–6 minutes. There is no menu, no text and no score.
+A web app for cats on an iPad. Small creatures cross the screen, seen from above. A paw touch on a creature makes it burst and squeak. A near miss makes it run away. A touch on empty ground makes a ripple. There is no menu, no text and no score.
+
+Five scenes show in turn, each with its own creatures:
+
+| Scene | Creatures |
+|---|---|
+| Kitchen floor | mice |
+| Meadow | butterflies, ladybugs |
+| Desert | lizards, beetles |
+| Pond | fish |
+| Living room at night | laser dots |
+
+## Settings
+
+Hold the gear at the top right for one second to open the settings. A short tap does nothing, so a cat cannot open it. The settings are:
+- scene change interval (default 2 minutes)
+- creatures on screen (default 3)
+- creature speed
+- sound volume
+
+The iPad keeps the settings in the browser. To add a setting, add a field to `FIELDS` in `settings.js` and read `settings.<key>` where it applies.
 
 No build step and no dependencies. All art is drawn in code and all sound is synthesized.
 

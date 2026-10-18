@@ -1,6 +1,7 @@
 import { rand, weighted } from './util.js';
 import { makeCreature, updateCreature, drawCreature, scare, hitRadius } from './creatures.js';
 import { SCENES } from './scenes.js';
+import { settings, initSettings } from './settings.js';
 import { Effects } from './effects.js';
 import { Sound } from './audio.js';
 
@@ -17,10 +18,8 @@ const game = (window.game = {
   scene: Math.floor(Math.random() * SCENES.length),
   next: -1,
   fade: 0,
-  sceneTimer: rand(180, 360),
+  sceneTimer: settings.rotation * 60,
   backdrops: new Map(),
-  target: 2,
-  targetTimer: rand(20, 60),
   spawnTimer: 0,
   step,
 });
@@ -53,8 +52,11 @@ function step(dt) {
 
   game.sceneTimer -= dt;
   if (game.next < 0 && game.sceneTimer <= 0) {
-    do game.next = Math.floor(Math.random() * SCENES.length); while (game.next === game.scene);
+    game.next = (game.scene + 1) % SCENES.length;
     game.fade = 0;
+    game.sceneTimer = settings.rotation * 60;
+    // The old scene's creatures run off, and the new scene's creatures come in.
+    for (const c of game.creatures) c.leaving = true;
   }
   if (game.next >= 0) {
     game.fade += dt / FADE;
@@ -63,26 +65,18 @@ function step(dt) {
       game.scene = game.next;
       game.next = -1;
       game.fade = 0;
-      game.sceneTimer = rand(180, 360);
     }
   }
 
-  // The number of creatures drifts, so the pace changes.
-  game.targetTimer -= dt;
-  if (game.targetTimer <= 0) {
-    game.target = 1 + Math.floor(Math.random() * 4);
-    game.targetTimer = rand(20, 60);
-  }
-
   game.spawnTimer -= dt;
-  const alive = game.creatures.filter((c) => c.dying < 0).length;
-  if (alive < game.target && game.spawnTimer <= 0) {
+  const alive = game.creatures.filter((c) => c.dying < 0 && !c.leaving).length;
+  if (alive < settings.count && game.spawnTimer <= 0) {
     const mix = SCENES[game.next >= 0 ? game.next : game.scene].mix;
     game.creatures.push(makeCreature(weighted(mix), w, h));
     game.spawnTimer = rand(0.5, 2.5);
   }
 
-  game.creatures = game.creatures.filter((c) => updateCreature(c, dt, w, h));
+  game.creatures = game.creatures.filter((c) => updateCreature(c, dt * settings.speed, w, h));
   game.effects.update(dt);
 }
 
@@ -165,10 +159,17 @@ canvas.addEventListener('pointermove', (e) => {
   if (e.pointerType === 'mouse' && !e.buttons) return;
   swipe(e.clientX, e.clientY);
 });
+// Block zoom, scroll and callouts everywhere except in the settings panel.
 for (const type of ['touchstart', 'touchmove', 'touchend', 'gesturestart', 'gesturechange', 'contextmenu', 'dblclick']) {
-  document.addEventListener(type, (e) => e.preventDefault(), { passive: false });
+  document.addEventListener(type, (e) => {
+    if (!e.target.closest?.('#panel')) e.preventDefault();
+  }, { passive: false });
 }
 window.addEventListener('resize', resize);
+initSettings((key) => {
+  if (key === 'rotation') game.sceneTimer = Math.min(game.sceneTimer, settings.rotation * 60);
+  if (key === 'volume') game.sound.setVolume(settings.volume);
+});
 
 let last = performance.now();
 function frame(now) {

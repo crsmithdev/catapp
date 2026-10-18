@@ -1,4 +1,5 @@
 import { rand, pick } from './util.js';
+import { settings } from './settings.js';
 
 const MAX_VOICES = 10;
 
@@ -17,7 +18,7 @@ export class Sound {
       try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch {}
       this.ctx = new AC();
       this.master = this.ctx.createGain();
-      this.master.gain.value = 0.7;
+      this.master.gain.value = settings.volume;
       this.master.connect(this.ctx.createDynamicsCompressor()).connect(this.ctx.destination);
       const n = Math.floor(this.ctx.sampleRate * 0.2);
       this.noise = this.ctx.createBuffer(1, n, this.ctx.sampleRate);
@@ -28,9 +29,13 @@ export class Sound {
     if (this.ctx.state !== 'running') this.ctx.resume();
   }
 
+  setVolume(v) {
+    if (this.master) this.master.gain.value = v;
+  }
+
   // Reserves a voice for `dur` seconds. Returns the start time, or -1 when no voice is free.
   voice(dur) {
-    if (!this.ctx || this.voices >= MAX_VOICES) return -1;
+    if (!this.ctx || !settings.volume || this.voices >= MAX_VOICES) return -1;
     this.voices++;
     setTimeout(() => this.voices--, dur * 1000 + 50);
     return this.ctx.currentTime;
